@@ -1,6 +1,6 @@
 import marimo
 
-__generated_with = "0.10.0"
+__generated_with = "0.20.4"
 app = marimo.App(width="medium")
 
 
@@ -59,7 +59,7 @@ def _():
     print(f"First call:  {result1}")
     print(f"Second call: {result2}")
     print(f"Same object? {result1['id'] == result2['id']}")
-    return create_payment, result1, result2, store
+    return
 
 
 @app.cell
@@ -91,7 +91,7 @@ def _():
     total = r1["amount"] + r2["amount"]
     print(f"Customer charged ${total:.2f} instead of ${r1['amount']:.2f}")
     print("DOUBLE CHARGE!")
-    return broken_create_payment, broken_store, r1, r2
+    return
 
 
 @app.cell
@@ -155,6 +155,7 @@ def _(mo):
 @app.cell
 def _():
     import marimo as mo
+
     return (mo,)
 
 

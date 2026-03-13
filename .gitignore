@@ -17,6 +17,7 @@ htmlcov/
 *.pem
 *.key
 .DS_Store
+__marimo__/
 .idea/
 .vscode/
 kubeconfig-*
