@@ -12,6 +12,7 @@ pythonpath = [
     "labs/03-payment-state-machine",
     "labs/05-reconciliation-engine",
     "labs/09-async-settlement",
+    "labs/15-kyc-pipeline",
 ]
 asyncio_mode = "auto"
 addopts = "-v --tb=short"
