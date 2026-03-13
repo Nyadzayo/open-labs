@@ -7,8 +7,9 @@ PostgreSQL with SELECT FOR UPDATE for concurrent dedup.
 from __future__ import annotations
 
 import json
+import sqlite3
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from decimal import Decimal
 from typing import Any
 
@@ -52,7 +53,11 @@ async def get_cached_response(
         row = await cursor.fetchone()
         if row is None:
             return None
-        return json.loads(row[0])
+        return json.loads(row[0])  # type: ignore[no-any-return]
+
+
+class DuplicateKeyError(Exception):
+    """Raised when an idempotency key already exists (concurrent race)."""
 
 
 async def create_payment(
@@ -62,10 +67,14 @@ async def create_payment(
     currency: str,
     recipient: str,
 ) -> dict[str, Any]:
-    """Create a payment and store the idempotency key atomically."""
+    """Create a payment and store the idempotency key atomically.
+
+    Raises DuplicateKeyError if the idempotency key was concurrently inserted.
+    Callers should handle this by fetching the cached response.
+    """
     payment_id = str(uuid.uuid4())
-    now = datetime.now(timezone.utc).isoformat()
-    response = {
+    now = datetime.now(UTC).isoformat()
+    response: dict[str, Any] = {
         "id": payment_id,
         "status": "PENDING",
         "amount": str(amount),
@@ -73,14 +82,28 @@ async def create_payment(
         "recipient": recipient,
         "created_at": now,
     }
-    async with aiosqlite.connect(db_path) as db:
-        await db.execute(
-            "INSERT INTO payments (id, status, amount, currency, recipient, created_at) VALUES (?, ?, ?, ?, ?, ?)",
-            (payment_id, "PENDING", str(amount), currency, recipient, now),
-        )
-        await db.execute(
-            "INSERT INTO idempotency_keys (key, response_json, created_at) VALUES (?, ?, ?)",
-            (idempotency_key, json.dumps(response), now),
-        )
-        await db.commit()
+    insert_payments = (
+        "INSERT INTO payments"
+        " (id, status, amount, currency, recipient, created_at)"
+        " VALUES (?, ?, ?, ?, ?, ?)"
+    )
+    insert_keys = (
+        "INSERT INTO idempotency_keys (key, response_json, created_at)"
+        " VALUES (?, ?, ?)"
+    )
+    try:
+        async with aiosqlite.connect(db_path) as db:
+            await db.execute(
+                insert_payments,
+                (payment_id, "PENDING", str(amount), currency, recipient, now),
+            )
+            await db.execute(
+                insert_keys,
+                (idempotency_key, json.dumps(response), now),
+            )
+            await db.commit()
+    except sqlite3.IntegrityError as exc:
+        if "idempotency_keys" in str(exc) or "UNIQUE" in str(exc):
+            raise DuplicateKeyError(idempotency_key) from exc
+        raise
     return response
