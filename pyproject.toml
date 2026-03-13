@@ -1,0 +1,28 @@
+[project]
+name = "fintech-labs"
+version = "0.1.0"
+description = "Interactive concept labs for fintech backend engineering"
+requires-python = ">=3.12"
+
+[tool.pytest.ini_options]
+testpaths = ["labs", "dsa", "system-design", "compliance"]
+pythonpath = [
+    "labs/01-idempotent-payments",
+    "labs/02-webhook-processing",
+    "labs/03-payment-state-machine",
+]
+asyncio_mode = "auto"
+addopts = "-v --tb=short"
+
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+
+[tool.mypy]
+python_version = "3.12"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
