@@ -95,8 +95,12 @@ def test_read_model_rebuild(
     store.append("pay_002", "PaymentCreated", {"amount": "75.00"})
 
     read_model.rebuild(store.all_events())
-    assert read_model.get("pay_001")["status"] == "AUTHORIZED"
-    assert read_model.get("pay_002")["status"] == "PENDING"
+    pay_001 = read_model.get("pay_001")
+    pay_002 = read_model.get("pay_002")
+    assert pay_001 is not None
+    assert pay_002 is not None
+    assert pay_001["status"] == "AUTHORIZED"
+    assert pay_002["status"] == "PENDING"
 
 
 def test_read_model_refund(
@@ -109,7 +113,9 @@ def test_read_model_refund(
     ]
     for event in events:
         read_model.apply(event)
-    assert read_model.get("pay_001")["status"] == "REFUNDED"
+    pay = read_model.get("pay_001")
+    assert pay is not None
+    assert pay["status"] == "REFUNDED"
 
 
 def test_read_model_list_all(
@@ -128,4 +134,6 @@ def test_duplicate_event_safe(
     event = store.append("pay_001", "PaymentCreated", {"amount": "100.00"})
     read_model.apply(event)
     read_model.apply(event)  # Duplicate — overwrites with same data
-    assert read_model.get("pay_001")["status"] == "PENDING"
+    pay = read_model.get("pay_001")
+    assert pay is not None
+    assert pay["status"] == "PENDING"

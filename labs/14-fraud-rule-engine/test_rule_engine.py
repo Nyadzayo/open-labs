@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from decimal import Decimal
 
-from models import Decision, Transaction
+from models import Decision, RuleResult, Transaction
 from rule_engine import (
     RuleEngine,
     amount_threshold_rule,
@@ -112,8 +112,7 @@ def test_engine_empty_rules() -> None:
 
 
 def test_engine_custom_rule() -> None:
-    def always_flag(tx: Transaction, _: list[Transaction]) -> ...:
-        from models import RuleResult
+    def always_flag(tx: Transaction, _: list[Transaction]) -> RuleResult:
         return RuleResult("custom", 0.95, "Always flags")
 
     engine = RuleEngine(rules=[always_flag])

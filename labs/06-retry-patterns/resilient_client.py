@@ -5,6 +5,7 @@ from __future__ import annotations
 import asyncio
 import time
 from enum import StrEnum
+from typing import Any
 
 import httpx
 
@@ -41,7 +42,7 @@ class ResilientClient:
     def circuit_state(self) -> CircuitState:
         return self._circuit_state
 
-    async def request(self, method: str, path: str, **kwargs: object) -> httpx.Response:
+    async def request(self, method: str, path: str, **kwargs: Any) -> httpx.Response:
         """Make request with retry + circuit breaker."""
         self._check_circuit()
 
@@ -65,7 +66,7 @@ class ResilientClient:
                     isinstance(exc, httpx.HTTPStatusError)
                     and exc.response.status_code < 500
                 )
-                if is_client_error:
+                if is_client_error and isinstance(exc, httpx.HTTPStatusError):
                     return exc.response
                 if attempt < self._max_retries:
                     await asyncio.sleep(self._base_delay * (2**attempt))

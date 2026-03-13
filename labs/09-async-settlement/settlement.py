@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass, field
-from typing import Any
 
 from models import PaymentStatus, SettlementResult
 
@@ -38,9 +38,9 @@ class SettlementProcessor:
     queue: list[SettlementTask] = field(default_factory=list)
     dlq: list[SettlementTask] = field(default_factory=list)
     settled: list[str] = field(default_factory=list)
-    _settle_fn: Any = None
+    _settle_fn: Callable[[Payment], SettlementResult] | None = None
 
-    def set_settle_fn(self, fn: Any) -> None:
+    def set_settle_fn(self, fn: Callable[[Payment], SettlementResult]) -> None:
         """Set the settlement function (for testing with fakes)."""
         self._settle_fn = fn
 

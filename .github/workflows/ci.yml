@@ -57,4 +57,10 @@ jobs:
           python-version: "3.12"
       - run: pip install -r requirements-dev.txt
       - run: ruff check .
-      - run: mypy labs/ --ignore-missing-imports
+      - name: Type check all labs
+        run: |
+          for lab in labs/[0-9]*/; do
+            echo "::group::mypy $lab"
+            mypy "$lab" --ignore-missing-imports
+            echo "::endgroup::"
+          done

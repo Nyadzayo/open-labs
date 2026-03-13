@@ -19,7 +19,7 @@ async def metrics_middleware(request: Request, call_next: object) -> Response:
     if request.url.path.startswith("/payments"):
         duration = time.monotonic() - start
         PAYMENT_LATENCY.observe(duration)
-    return response  # type: ignore[return-value]
+    return response  # type: ignore[return-value,no-any-return]
 
 
 @app.post("/payments")
