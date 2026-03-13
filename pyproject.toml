@@ -10,8 +10,17 @@ pythonpath = [
     "labs/01-idempotent-payments",
     "labs/02-webhook-processing",
     "labs/03-payment-state-machine",
+    "labs/04-ledger-invariants",
     "labs/05-reconciliation-engine",
+    "labs/06-retry-patterns",
+    "labs/07-k8s-payment-deploy",
+    "labs/08-payment-monitoring",
     "labs/09-async-settlement",
+    "labs/10-event-driven-payments",
+    "labs/11-api-contract-testing",
+    "labs/12-rate-limiter",
+    "labs/13-terraform-basics",
+    "labs/14-fraud-rule-engine",
     "labs/15-kyc-pipeline",
 ]
 asyncio_mode = "auto"
@@ -26,6 +35,7 @@ select = ["E", "F", "I", "UP", "B", "SIM"]
 
 [tool.ruff.lint.per-file-ignores]
 "**/lab.py" = ["E501"]
+"**/conftest.py" = ["E402"]
 
 [tool.mypy]
 python_version = "3.12"

@@ -16,7 +16,18 @@ from pathlib import Path
 import pytest
 
 # Module names that exist in multiple labs — must be cleared between labs
-_SHARED_NAMES = {"app", "db", "models", "crypto", "test_helpers", "state_machine"}
+_SHARED_NAMES = {
+    "app", "db", "models", "crypto", "test_helpers", "state_machine",
+    "ledger", "reconciler", "resilient_client", "metrics",
+    "event_store", "read_model", "producer", "consumer",
+    "provider", "client", "schemas", "rate_limiter",
+    "rule_engine", "pipeline", "settlement",
+    "test_payments", "test_webhooks", "test_crypto", "test_state_machine",
+    "test_ledger", "test_reconciler", "test_resilient_client", "test_k8s",
+    "test_monitoring", "test_settlement", "test_event_store",
+    "test_contracts", "test_rate_limiter", "test_terraform",
+    "test_rule_engine", "test_kyc_app", "test_kyc_pipeline",
+}
 
 _active_lab: str | None = None
 
