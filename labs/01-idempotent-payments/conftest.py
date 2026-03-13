@@ -8,7 +8,6 @@ from pathlib import Path
 from typing import Any
 
 import pytest
-from fastapi import FastAPI
 from httpx import ASGITransport, AsyncClient
 
 
@@ -19,16 +18,15 @@ async def db_path(tmp_path: Path) -> str:
 
 
 @pytest.fixture
-async def app(db_path: str) -> FastAPI:
+async def app(db_path: str) -> Any:
     """Create a FastAPI app instance with a test database."""
-    # Set env before import so app picks it up
     os.environ["DATABASE_PATH"] = db_path
 
     from app import app as fastapi_app
     from db import init_db
 
     await init_db(db_path)
-    return fastapi_app  # type: ignore[return-value]
+    return fastapi_app
 
 
 @pytest.fixture

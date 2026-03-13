@@ -88,8 +88,9 @@ def _():
 
     print(f"Payment 1: {r1}")
     print(f"Payment 2: {r2}")
-    print(f"Customer charged ${r1['amount'] + r2['amount']:.2f} instead of ${r1['amount']:.2f}")
-    print(f"DOUBLE CHARGE!")
+    total = r1["amount"] + r2["amount"]
+    print(f"Customer charged ${total:.2f} instead of ${r1['amount']:.2f}")
+    print("DOUBLE CHARGE!")
     return broken_create_payment, broken_store, r1, r2
 
 
