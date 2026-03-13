@@ -10,6 +10,7 @@ pythonpath = [
     "labs/01-idempotent-payments",
     "labs/02-webhook-processing",
     "labs/03-payment-state-machine",
+    "labs/05-reconciliation-engine",
 ]
 asyncio_mode = "auto"
 addopts = "-v --tb=short"
